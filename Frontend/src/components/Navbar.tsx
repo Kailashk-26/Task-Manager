@@ -1,0 +1,29 @@
+import { ClipboardList, LogOut, User } from 'lucide-react'
+
+const Navbar = () => {
+  return (
+    <div className=''>
+        <div className="p-3 flex items-center justify-between bg-blue-200 shadow-sm ">
+            <div className="navbar-start font-bold">
+                <a>Task Manager</a>
+            </div>
+            <div className="navbar-end">
+                <button className="btn btn-ghost btn-circle">
+                <div className="indicator">
+                    <ClipboardList/>
+                    <span className="badge badge-xs badge-primary indicator-item"></span>
+                </div>
+                </button>
+                <button className="btn btn-ghost btn-circle">
+                    <User/>
+                </button>
+                <button className="btn btn-ghost btn-circle">
+                    <LogOut/>
+                </button>
+            </div>
+        </div>
+    </div>
+  )
+}
+
+export default Navbar
