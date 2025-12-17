@@ -2,7 +2,7 @@ import { Users } from 'lucide-react'
 
 const Sidebar = () => {
   return (
-    <div className='h-screen text-gray-200 '>
+    <div className='min-h-screen text-gray-200 '>
       {/* large screens */}
       <div className="hidden md:block w-80 bg-base-200 min-h-full p-4">
         <p className='text-xl font-bold my-3 text-center'>Members</p>

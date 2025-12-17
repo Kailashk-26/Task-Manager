@@ -10,7 +10,7 @@ const Navbar = () => {
         navigate('/tasks')
     }
   return (
-    <div className=''>
+    <div>
         <div className="p-3 flex items-center justify-between bg-blue-200 shadow-sm ">
             <div className="navbar-start font-bold">
                 <a>Task Manager</a>

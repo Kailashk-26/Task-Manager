@@ -8,7 +8,7 @@ import Tasks from './pages/Tasks'
 function App() {
 
   return (
-    <div className='bg-white text-black'>
+    <div className='min-h-screen bg-neutral-300 text-black '>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/reg' element={<Login/>}/>

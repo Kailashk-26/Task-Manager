@@ -1,4 +1,4 @@
-import { tasks } from '../constant'
+import { tasks, users } from '../constant'
 
 const AssignedTasks = () => {
   return (
@@ -9,6 +9,13 @@ const AssignedTasks = () => {
                     <p className="font-semibold text-gray-700">{task.id}</p>
                     <p className="text-gray-400">.</p>
                     <p className="text-gray-800">{task.title}</p>
+                    {users
+                    .filter(user => user.id === task.creatorId)
+                    .map((user,i) => (
+                        <p key={i} className="text-gray-800 font-light">
+                            - Assigned By {user.name}
+                        </p>
+                    ))}
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
                     <p className="px-2 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium">{task.status}</p>

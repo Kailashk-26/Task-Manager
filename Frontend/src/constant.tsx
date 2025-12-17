@@ -42,8 +42,8 @@ export interface Task {
 export const users: User[] = [
   {
     id: "u1",
-    name: "Kailash",
-    email: "kailash@example.com",
+    name: "Musk",
+    email: "Musk@example.com",
     jobPosition: "Frontend Developer",
   },
   {
