@@ -9,7 +9,7 @@ const Home = () => {
         <Sidebar/>
         <div className='flex flex-col w-full'>
             <Navbar/>
-            <div className='m-6 bg-linear-to-r from-indigo-500 to-blue-500 rounded items-center flex flex-col justify-center border p-8'>
+            <div className='m-6 bg-linear-to-r from-indigo-500 to-blue-500 rounded-lg items-center flex flex-col justify-center p-8 shadow-md shadow-black'>
                 <Plus/>
                 <p>New Task</p>
             </div>
