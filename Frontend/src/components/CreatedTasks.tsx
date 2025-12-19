@@ -1,12 +1,22 @@
-import { MessageCircleQuestionMark, X } from 'lucide-react'
+import { MessageCircleQuestionMark, Plus, X } from 'lucide-react'
 import { tasks, users } from '../constant'
 import { useState } from 'react'
 
 const CreatedTasks = () => {
     const[clickedCancel,setClickedCancel]=useState(false)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
   return (
     <div className='my-2'>
-        {tasks.map((task,i)=>(
+        <div className="flex items-start justify-center gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
+            <Plus/> Create Task
+        </div>
+        {tasks.map((task,i)=>{
+            const due = new Date(task.dueDate)
+            due.setHours(0, 0, 0, 0)
+            const diffTime = due.getTime() - today.getTime()
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            return (
             <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
                 <div className="flex items-center gap-2 sm:gap-4">
                     <button onClick={()=>setClickedCancel(!clickedCancel)} className='px-2 py-1 rounded bg-red-800 text-black cursor-pointer'>
@@ -26,10 +36,13 @@ const CreatedTasks = () => {
                 <div className="flex items-center gap-2 sm:gap-4">
                     <p className="px-2 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium">{task.status}</p>
                     <p className="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-medium">{task.priority}</p>
-                    <p className='px-2 py-1 rounded bg-gray-800 text-white text-xs font-medium'>{task.dueDate.split("T")[0]}</p>
+                        {diffDays<0 ?  <p className='px-2 py-1 rounded bg-red-800 text-white text-xs font-medium'>Overdue</p>:
+                        <p className='px-2 py-1 rounded bg-gray-800 text-white text-xs font-medium'>{task.dueDate.split("T")[0]}</p>}
                 </div>
             </div>
-        ))}
+            )
+        }
+        )}
         {clickedCancel &&
             <div className='fixed inset-0 z-5 flex items-center justify-center bg-gray-700/70 backdrop-blur-sm'>
                 <div className='bg-neutral-600 text-white px-6 py-3 flex flex-col items-center justify-center rounded'>
