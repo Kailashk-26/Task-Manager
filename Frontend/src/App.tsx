@@ -6,6 +6,7 @@ import Tasks from './pages/Tasks'
 import CreateTaskPage from './components/CreateTask'
 import EditTaskPage from './components/EditTask'
 import TaskDetailsPage from './components/TaskDetailsPage'
+import EditProfilePage from './components/EditProfile'
 
 
 function App() {
@@ -16,7 +17,9 @@ function App() {
         <Route path='/' element={<Home/>}/>
         <Route path='/reg' element={<Login/>}/>
         <Route path='/profile' element={<Profile/>}/>
+        <Route path="/profile/:id" element={<EditProfilePage />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/tasks/:id" element={<TaskDetailsPage/>} />
         <Route
           path="/tasks/create"
           element={<CreateTaskPage/>}
@@ -26,7 +29,7 @@ function App() {
           path="/tasks/edit/:id"
           element={<EditTaskPage/>}
         />
-        <Route path="/tasks/:id" element={<TaskDetailsPage/>} />
+
       </Routes>
     </div>
   )

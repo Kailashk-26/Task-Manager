@@ -41,7 +41,7 @@ const Profile = () => {
           </div>
 
           <div className="flex sm:flex-col gap-3">
-            <button className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            <button onClick={()=>navigate(`/profile/${user.id}`)} className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
               <Edit size={18} />
               Edit
             </button>
