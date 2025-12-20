@@ -1,13 +1,18 @@
-import { ClipboardList, LogOut, User } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { ClipboardList, LogOut, MessageCircleQuestionMark, User } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate} from 'react-router-dom'
 
 const Navbar = () => {
+    const [logoutButton,setLogoutButton]=useState(false)
     const navigate=useNavigate()
     const goProfile=()=>{
         navigate('/profile')
     }
     const goToTasks=()=>{
         navigate('/tasks')
+    }
+    const logout=()=>{
+
     }
   return (
     <div>
@@ -25,9 +30,21 @@ const Navbar = () => {
                 <button onClick={()=>goProfile()} className="btn btn-ghost btn-circle">
                     <User/>
                 </button>
-                <button className="btn btn-ghost btn-circle">
+                <button onClick={()=>setLogoutButton(!logoutButton)} className="btn btn-ghost btn-circle">
                     <LogOut/>
                 </button>
+                {logoutButton && 
+                    <div className='fixed inset-0 z-5 flex items-center justify-center bg-gray-700/70 backdrop-blur-sm'>
+                        <div className='bg-neutral-600 text-white px-6 py-3 flex flex-col items-center justify-center rounded'>
+                            <MessageCircleQuestionMark/>
+                            <p className='mt-3'>Do you want to Logout?</p>
+                            <div className='flex gap-4 p-5'>
+                                <button onClick={()=>logout()} className='px-4 py-2 bg-black rounded'>Yes</button>
+                                <button onClick={()=>setLogoutButton(!logoutButton)} className='px-4 py-2 border rounded'>No</button>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

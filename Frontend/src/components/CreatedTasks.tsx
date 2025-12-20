@@ -1,14 +1,16 @@
 import { MessageCircleQuestionMark, Plus, X } from 'lucide-react'
 import { tasks, users } from '../constant'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const CreatedTasks = () => {
+    const navigate=useNavigate()
     const[clickedCancel,setClickedCancel]=useState(false)
     const today = new Date()
     today.setHours(0, 0, 0, 0)
   return (
     <div className='my-2'>
-        <div className="flex items-start justify-center gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
+        <div onClick={()=>navigate('/tasks/create')} className="flex items-start justify-center gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
             <Plus/> Create Task
         </div>
         {tasks.map((task,i)=>{
@@ -17,7 +19,7 @@ const CreatedTasks = () => {
             const diffTime = due.getTime() - today.getTime()
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
             return (
-            <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
+            <div key={i} onClick={()=>navigate(`/tasks/edit/${task.id}`)} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
                 <div className="flex items-center gap-2 sm:gap-4">
                     <button onClick={()=>setClickedCancel(!clickedCancel)} className='px-2 py-1 rounded bg-red-800 text-black cursor-pointer'>
                         <X size={10}/>
