@@ -19,7 +19,7 @@ const CreatedTasks = () => {
             const diffTime = due.getTime() - today.getTime()
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
             return (
-            <div key={i} onClick={()=>navigate(`/tasks/edit/${task.id}`)} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
+            <div key={i} onClick={()=>navigate(`/tasks/${task.id}`)} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
                 <div className="flex items-center gap-2 sm:gap-4">
                     <button onClick={()=>setClickedCancel(!clickedCancel)} className='px-2 py-1 rounded bg-red-800 text-black cursor-pointer'>
                         <X size={10}/>

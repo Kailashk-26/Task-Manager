@@ -34,7 +34,7 @@ const OverdueTasks = () => {
                   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   
                   return (
-                      <div key={i} onClick={()=>navigate(`/tasks/edit/${task.id}`)} className="my-2">
+                      <div key={i} onClick={()=>navigate(`/tasks/${task.id}`)} className="my-2">
                           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 rounded-lg bg-gray-100 shadow-sm">
   
                               <div className="flex items-center gap-2 sm:gap-4">

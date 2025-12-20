@@ -5,6 +5,7 @@ import Profile from './pages/Profile'
 import Tasks from './pages/Tasks'
 import CreateTaskPage from './components/CreateTask'
 import EditTaskPage from './components/EditTask'
+import TaskDetailsPage from './components/TaskDetailsPage'
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           path="/tasks/edit/:id"
           element={<EditTaskPage/>}
         />
+        <Route path="/tasks/:id" element={<TaskDetailsPage/>} />
       </Routes>
     </div>
   )
