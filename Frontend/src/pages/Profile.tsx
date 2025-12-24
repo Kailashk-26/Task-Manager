@@ -1,10 +1,29 @@
 import { Edit, MoveLeftIcon, Trash } from "lucide-react"
-import { users } from "../constant"
 import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
+import api from "../configs/api";
 
 const Profile = () => {
-  const user = users[0]
-  const navigate=useNavigate()
+  type User = {
+    _id: string;
+    name: string;
+    email: string;
+    jobPosition?: string;
+  };
+
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data } = await api.get<User>("/api/users/check");
+      setUser(data);
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (!user) return <p className="text-center">Loading...</p>;
 
   return (
     <div className="p-3">
@@ -21,7 +40,7 @@ const Profile = () => {
           <div className="w-full sm:w-2/3 space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
               <span className="text-sm text-gray-500">ID</span>
-              <span className="font-medium text-gray-800">{user.id}</span>
+              <span className="font-medium text-gray-800">{user._id}</span>
             </div>
 
             <div className="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
@@ -41,12 +60,12 @@ const Profile = () => {
           </div>
 
           <div className="flex sm:flex-col gap-3">
-            <button onClick={()=>navigate(`/profile/${user.id}`)} className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            <button onClick={()=>navigate(`/profile/${user._id}`)} className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
               <Edit size={18} />
               Edit
             </button>
 
-            <button className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+            <button onClick={()=>navigate('/profile/delete')} className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
               <Trash size={18} />
               Delete
             </button>

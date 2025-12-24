@@ -1,7 +1,24 @@
 import { LockIcon, Mail, User } from "lucide-react";
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import api from "../configs/api";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
+
+    type AuthResponse = {
+    message: string;
+    token: string;
+    user: {
+        _id: string;
+        name: string;
+        email: string;
+    };
+    };
+    const navigate=useNavigate()
+
   const [state, setState] = useState("login");
 
     const [data, setData] = useState({
@@ -14,10 +31,44 @@ const Login = () => {
         setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        try {
+            if (state === "login") {
+            const { data:resData } = await api.post<AuthResponse>("/api/users/login",
+                    {
+                    email: data.email,
+                    password: data.password,
+                    }
+                );
+
+                toast.success(resData.message);
+                localStorage.setItem("token", resData.token);
+                navigate('/')
+            } else {
+            const { data:resData } = await api.post<AuthResponse>("/api/users/reg",
+                    {
+                    name: data.name,
+                    email: data.email,
+                    password: data.password,
+                    }
+                );
+
+                toast.success(resData.message);
+                localStorage.setItem("token", resData.token);
+                navigate('/')
+            }
+
+        } catch (err: unknown) {
+            if (err instanceof AxiosError) {
+            toast.error(err.response?.data?.message || err.message);
+            } else {
+            toast.error("Something went wrong");
+            }
+        }
     };
+
   return (
       <div className="flex items-center justify-center min-h-screen bg-neutral-600">
         <form

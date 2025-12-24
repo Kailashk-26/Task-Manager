@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/User.ts";
+import { AuthRequest } from "../middleware/authMiddleware.ts";
 
 const generateToken = (userId: string) => {
     if (!process.env.JWT_SECRET) {
@@ -56,6 +57,7 @@ export const regUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
+        console.log(email,password)
 
         if (!email || !password) {
             return res.status(400).json({ message: "All fields are required" });
@@ -77,7 +79,7 @@ export const loginUser = async (req: Request, res: Response) => {
         return res.status(200).json({
             message: "User logged in successfully",
             token,
-            showUser,
+            user: showUser,
         });
 
     } catch (err: any) {
@@ -85,47 +87,66 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 };
 
-// api/users/del
+// api/users/check
+export const checkAuth = async (req: AuthRequest, res: Response) => {
+  const user = await User.findById(req.userId).select("-password");
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json(user);
+};
+
+
+// api/users/logout
 export const logoutUser = async (_req: Request, res: Response) => {
     return res.status(200).json({ message: "Logged out successfully" });
 };
 
-export const updateUser = async (req:Request, res:Response) => {
-    try {
-        const { name, email } = req.body;
+// api/users/update
+export const updateUser = async (req: AuthRequest, res: Response) => {
+  try {
+    const { name, jobPosition } = req.body;
 
-        if (!name || !email) {
-            return res.status(400).json({
-                message: "Name and email are required",
-            });
-        }
-
-        const userId = (req as any).user.userId;
-
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { name, email },
-            { new: true, runValidators: true }
-        ).select("-password");
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        return res.status(200).json({
-            message: "User updated successfully",
-            user: updatedUser,
-        });
-
-    } catch (err:any) {
-        return res.status(400).json({ message: err.message });
+    if (!name) {
+      return res.status(400).json({
+        message: "Name and email are required",
+      });
     }
+
+    if (!req.userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      { name, jobPosition},
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log(updateUser)
+    return res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+
+
+  } catch (err) {
+    return res.status(500).json({
+      message: err instanceof Error ? err.message : "Server error",
+    });
+  }
 };
 
 // api/users/del
-export const deleteAcc = async (req: Request, res: Response) => {
+export const deleteAcc = async (req: AuthRequest, res: Response) => {
     try {
-        const userId = (req as any).user.userId; // from auth middleware
+        const userId = req.userId; // from auth middleware
 
         await User.findByIdAndDelete(userId);
 

@@ -55,7 +55,7 @@ const ProfileEditForm = ({ initialData, onSubmit }: ProfileEditFormProps) => {
           <label className="text-sm text-gray-600">Email</label>
           <input
             {...register("email")}
-            disabled
+            readOnly
             className="mt-1 w-full p-2.5 border rounded-lg bg-gray-100 cursor-not-allowed"
           />
         </div>

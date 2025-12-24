@@ -1,7 +1,39 @@
 import { Users } from 'lucide-react'
-import { users } from '../constant'
+import { useEffect, useState } from 'react'
+import api from '../configs/api';
+import toast from 'react-hot-toast';
+import type { AxiosError } from 'axios';
 
 const Sidebar = () => {
+  type User = {
+    _id: string;
+    name: string;
+    email: string;
+  };
+
+
+  const [users,setUsers]=useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { data } = await api.get('/api/users/getAll')
+        console.log("users value:", data.users);
+        console.log("isArray:", Array.isArray(data.users));
+
+        setUsers(data)
+      } catch (err) {
+        const error = err as AxiosError<{ message: string }>
+        toast.error(
+          error.response?.data?.message || error.message
+        )
+      }
+    }
+
+    fetchUsers()
+  }, [])
+
+
   return (
     <div className='min-h-screen text-gray-200 '>
       {/* large screens */}

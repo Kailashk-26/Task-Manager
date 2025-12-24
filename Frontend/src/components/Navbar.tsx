@@ -1,6 +1,8 @@
 import { ClipboardList, LogOut, MessageCircleQuestionMark, User } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate} from 'react-router-dom'
+import api from '../configs/api'
+import toast from 'react-hot-toast'
 
 const Navbar = () => {
     const [logoutButton,setLogoutButton]=useState(false)
@@ -11,8 +13,16 @@ const Navbar = () => {
     const goToTasks=()=>{
         navigate('/tasks')
     }
-    const logout=()=>{
-
+    const logout=async()=>{
+        try {
+           const {data}= await api.post("/api/users/logout") 
+           toast.success(data.message)
+        } catch{
+           toast.error("Logout Failed")
+        } finally {
+            localStorage.removeItem("token") // 🔥 THIS logs out user
+            window.location.href = "/reg"
+        }
     }
   return (
     <div>

@@ -2,9 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 export interface AuthRequest extends Request {
-    user?: {
-        userId: string;
-    };
+        userId?: string;
 }
 
 export const protect = (
@@ -30,7 +28,7 @@ export const protect = (
             process.env.JWT_SECRET
         ) as JwtPayload;
 
-        req.user = { userId: decoded.userId }; 
+        req.userId =decoded.userId;
 
         next();
     } catch (error) {
