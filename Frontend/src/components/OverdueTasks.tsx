@@ -1,10 +1,38 @@
 import { useNavigate } from 'react-router-dom'
-import { tasks, users } from '../constant'
+import { useEffect, useState } from 'react'
+import api from '../configs/api'
+import type { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
 
 const OverdueTasks = () => {
+    type Task = {
+        _id: string
+        title: string
+        dueDate: string
+        priority: string
+        status: string
+        creatorId: {
+            _id: string
+            name: string
+            email: string
+        }
+    }
     const navigate=useNavigate()
-  const today = new Date()
+    const today = new Date()
       today.setHours(0, 0, 0, 0)
+      const [tasks,setTasks]=useState<Task[]>([]);
+        useEffect(()=>{
+            const getTasks=async()=>{
+                try{
+                    const {data}=await api.get('/api/tasks/overdue')
+                    setTasks(data)
+                }catch(err){
+                    const error = err as AxiosError<{ message: string }>
+                    toast.error(error.response?.data?.message || error.message)
+                }
+            }
+            getTasks()
+        },[])
   
       const validTasks = tasks.filter(task => {
           const due = new Date(task.dueDate)
@@ -23,6 +51,7 @@ const OverdueTasks = () => {
               </p>
           )
       }
+
   
       return (
           <>
@@ -34,21 +63,16 @@ const OverdueTasks = () => {
                   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   
                   return (
-                      <div key={i} onClick={()=>navigate(`/tasks/${task.id}`)} className="my-2">
+                      <div key={i} onClick={()=>navigate(`/tasks/${task._id}`)} className="my-2">
                           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 rounded-lg bg-gray-100 shadow-sm">
   
                               <div className="flex items-center gap-2 sm:gap-4">
-                                  <p className="font-semibold text-gray-700">{task.id}</p>
+                                  <p className="font-semibold text-gray-700">{task._id.slice(-4)}</p>
                                   <p className="text-gray-400">.</p>
                                   <p className="text-gray-800">{task.title}</p>
-  
-                                  {users
-                                      .filter(user => user.id === task.creatorId)
-                                      .map(user => (
-                                          <p key={user.id} className="text-gray-800 font-light">
-                                              - Assigned By {user.name}
-                                          </p>
-                                      ))}
+                                    <p className="text-gray-800 font-light">
+                                        - Assigned By {task.creatorId.name}
+                                    </p>
                               </div>
   
                               <div className="flex items-center gap-2 sm:gap-4">

@@ -9,13 +9,12 @@ export const statusEnum = [
 ] as const
 
 export const taskSchema = z.object({
-  title: z.string().min(1).max(100),
-  description: z.string().min(1),
-  dueDate: z.string().min(1),
+  title: z.string().min(1, "Title is required").max(100),
+  description: z.string().min(1, "Description is required"),
+  dueDate: z.date(),
   priority: z.enum(priorityEnum),
   status: z.enum(statusEnum),
-  creatorId: z.string().min(1),
-  assignedToId: z.string().min(1)
+  assignedToId: z.string().min(1, "User is required"),
 })
 
 export type TaskFormValues = z.infer<typeof taskSchema>

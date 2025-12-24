@@ -11,7 +11,7 @@ import {
   updateStatusSchema,
 } from "../validators/taskValidators.ts";
 
-
+// api/tasks/create
 export const createTask = async (req: AuthRequest, res: Response) => {
   try {
     const parsed = createTaskSchema.parse(req.body);
@@ -28,19 +28,20 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     const task = await TaskModel.create({
       ...parsed,
       dueDate: new Date(parsed.dueDate),
-      creatorId: req.user!.userId,
+      creatorId: req.userId,
     });
 
     // notify assigned user
     const io = getIO();
     io.to(parsed.assignedToId).emit("task-assigned", task);
 
-    res.status(201).json(task);
+    res.status(201).json({message:"Task created",task});
   } catch (err: any) {
     res.status(400).json({ message: err.errors ?? err.message });
   }
 };
 
+// api/tasks/edit/id
 export const editTask = async (req: AuthRequest, res: Response) => {
   try {
     const parsed = editTaskSchema.parse(req.body);
@@ -48,7 +49,7 @@ export const editTask = async (req: AuthRequest, res: Response) => {
     const task = await TaskModel.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    if (task.creatorId.toString() !== req.user!.userId) {
+    if (task.creatorId.toString() !== req.userId) {
       return res.status(403).json({ message: "Only creator can edit task" });
     }
 
@@ -80,7 +81,7 @@ export const editTask = async (req: AuthRequest, res: Response) => {
   }
 };
 
-
+// api/tasks/status/id
 export const updateStatus = async (req: AuthRequest, res: Response) => {
   try {
     const { status } = updateStatusSchema.parse(req.body);
@@ -88,7 +89,7 @@ export const updateStatus = async (req: AuthRequest, res: Response) => {
     const task = await TaskModel.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    if (task.assignedToId.toString() !== req.user!.userId) {
+    if (task.assignedToId.toString() !== req.userId) {
       return res
         .status(403)
         .json({ message: "Only assigned user can update status" });
@@ -107,11 +108,12 @@ export const updateStatus = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// api/tasks/del/id
 export const deleteTask = async (req: AuthRequest, res: Response) => {
   const task = await TaskModel.findById(req.params.id);
   if (!task) return res.status(404).json({ message: "Task not found" });
 
-  if (task.creatorId.toString() !== req.user!.userId) {
+  if (task.creatorId.toString() !== req.userId) {
     return res.status(403).json({ message: "Only creator can delete task" });
   }
 
@@ -119,30 +121,54 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
   res.json({ message: "Task deleted" });
 };
 
+// api/tasks/created
 export const createdTasks = async (req: AuthRequest, res: Response) => {
-  const tasks = await TaskModel.find({ creatorId: req.user!.userId })
+  const tasks = await TaskModel.find({ creatorId: req.userId })
     .populate("assignedToId", "name email")
     .sort({ createdAt: -1 });
 
   res.json(tasks);
 };
 
+// api/tasks/assigned
 export const assignedTasks = async (req: AuthRequest, res: Response) => {
-  const tasks = await TaskModel.find({ assignedToId: req.user!.userId })
-    .populate("creatorId", "name email")
-    .sort({ dueDate: 1 });
-
+  const tasks = await TaskModel.find({ assignedToId: req.userId })
+  .populate("creatorId", "name email")
+  .sort({ dueDate: 1 });
+  
   res.json(tasks);
 };
 
+// api/tasks/overdue
 export const overdueTasks = async (req: AuthRequest, res: Response) => {
   const today = new Date();
-
+  
   const tasks = await TaskModel.find({
-    assignedToId: req.user!.userId,
+    assignedToId: req.userId,
     dueDate: { $lt: today },
     status: { $ne: "Completed" },
-  }).sort({ dueDate: 1 });
-
+  }).populate("creatorId", "name email").sort({ dueDate: 1 });
+  
   res.json(tasks);
+};
+
+// api/tasks/detail/id
+export const getDetail = async (req: AuthRequest, res: Response) => {
+  const task = await TaskModel.findById(req.params.id)
+    .populate("assignedToId", "name email")
+    .populate("creatorId", "name email");
+
+  if (!task) {
+    return res.status(404).json({ message: "Task not found" });
+  }
+
+  // authorization check (optional: adjust logic if needed)
+  if (
+    task.assignedToId._id.toString() !== req.userId &&
+    task.creatorId._id.toString() !== req.userId
+  ) {
+    return res.status(403).json({ message: "Not authorized" });
+  }
+
+  return res.status(200).json(task);
 };

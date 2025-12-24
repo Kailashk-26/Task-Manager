@@ -9,6 +9,7 @@ import TaskDetailsPage from "./components/TaskDetailsPage"
 import EditProfilePage from "./components/EditProfile"
 import DeleteAccountPage from "./components/AccDel"
 import { Toaster } from "react-hot-toast"
+import TaskDel from "./components/TaskDel"
 
 
 const Protected = () => {
@@ -41,6 +42,7 @@ function App() {
           <Route path="/tasks/:id" element={<TaskDetailsPage />} />
           <Route path="/tasks/create" element={<CreateTaskPage />} />
           <Route path="/tasks/edit/:id" element={<EditTaskPage />} />
+          <Route path="/tasks/delete/:id" element={<TaskDel />} />
         </Route>
       </Routes>
     </div>

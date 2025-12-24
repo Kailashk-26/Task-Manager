@@ -4,12 +4,14 @@ import type { ProfileFormValues } from "../types/profile"
 import api from "../configs/api"
 import toast from "react-hot-toast"
 import { AxiosError } from "axios"
+import { useNavigate } from "react-router-dom"
 
 type User = ProfileFormValues & {
   _id: string
 }
 
 const EditProfilePage = () => {
+  const navigate=useNavigate()
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
@@ -30,6 +32,7 @@ const EditProfilePage = () => {
     try {
       const res = await api.put("/api/users/update", data)
       toast.success(res.data.message)
+      navigate(-1)
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.message || err.message)

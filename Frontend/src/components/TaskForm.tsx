@@ -2,7 +2,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { taskSchema } from "../types/task"
 import type { TaskFormValues } from "../types/task"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import type { AxiosError } from "axios"
+import toast from "react-hot-toast"
+import api from "../configs/api"
 
 type TaskFormProps = {
   mode: "create" | "edit"
@@ -11,6 +14,33 @@ type TaskFormProps = {
 }
 
 const TaskForm = ({ mode, initialData, onSubmit }: TaskFormProps) => {
+
+  type User = {
+    _id: string;
+    name: string;
+    email: string;
+  };
+
+
+  const [users,setUsers]=useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { data } = await api.get('/api/users/getAll')
+
+        setUsers(data)
+      } catch (err) {
+        const error = err as AxiosError<{ message: string }>
+        toast.error(
+          error.response?.data?.message || error.message
+        )
+      }
+    }
+
+    fetchUsers()
+  }, [])
+
   const {
     register,
     handleSubmit,
@@ -86,7 +116,7 @@ const TaskForm = ({ mode, initialData, onSubmit }: TaskFormProps) => {
               <label className="text-sm text-gray-600">Due Date</label>
               <input
                 type="date"
-                {...register("dueDate")}
+                {...register("dueDate", { valueAsDate: true })}
                 className="mt-1 w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.dueDate && (
@@ -127,12 +157,15 @@ const TaskForm = ({ mode, initialData, onSubmit }: TaskFormProps) => {
             {/* Assigned To */}
             <div>
               <label className="text-sm text-gray-600">Assigned To</label>
-              <input
-                type="text"
-                placeholder="User ID"
+              <select
                 {...register("assignedToId")}
-                className="mt-1 w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                className="mt-1 w-full p-2.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a user</option>
+                {users.map((user,i)=>(
+                  <option key={i} value={user._id}>{user.name}</option>
+                ))}
+              </select>
               {errors.assignedToId && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.assignedToId.message}
