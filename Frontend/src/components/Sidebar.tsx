@@ -18,8 +18,6 @@ const Sidebar = () => {
     const fetchUsers = async () => {
       try {
         const { data } = await api.get('/api/users/getAll')
-        console.log("users value:", data.users);
-        console.log("isArray:", Array.isArray(data.users));
 
         setUsers(data)
       } catch (err) {

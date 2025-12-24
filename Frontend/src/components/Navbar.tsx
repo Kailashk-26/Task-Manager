@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate} from 'react-router-dom'
 import api from '../configs/api'
 import toast from 'react-hot-toast'
+import socket from '../configs/socket'
 
 const Navbar = () => {
     const [logoutButton,setLogoutButton]=useState(false)
@@ -20,7 +21,8 @@ const Navbar = () => {
         } catch{
            toast.error("Logout Failed")
         } finally {
-            localStorage.removeItem("token") // 🔥 THIS logs out user
+            localStorage.removeItem("token")
+            socket.disconnect();
             window.location.href = "/reg"
         }
     }

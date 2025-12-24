@@ -1,4 +1,4 @@
-import { MessageCircleQuestionMark, Plus, X } from 'lucide-react'
+import { MessageCircleQuestionMark, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
@@ -48,9 +48,6 @@ const CreatedTasks = () => {
             return (
             <div key={i} onClick={()=>navigate(`/tasks/${task._id}`)} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 mb-2 rounded-lg bg-gray-100 shadow-sm">
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <button onClick={()=>setClickedCancel(!clickedCancel)} className='px-2 py-1 rounded bg-red-800 text-black cursor-pointer'>
-                        <X size={10}/>
-                    </button>
                     <p className="font-semibold text-gray-700">{task._id.slice(-4)}</p>
                     <p className="text-gray-400">.</p>
                     <p className="text-gray-800">{task.title}</p>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import api from '../configs/api';
 import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
+import socket from '../configs/socket';
 
 const AssignedTasks = () => {
     type Task = {
@@ -19,17 +20,30 @@ const AssignedTasks = () => {
     }
     const navigate=useNavigate()
     const [tasks,setTasks]=useState<Task[]>([]);
-    useEffect(()=>{
-        const getTasks=async()=>{
-            try{
-                const {data}=await api.get('/api/tasks/assigned')
-                setTasks(data)
-            }catch(err){
-                const error = err as AxiosError<{ message: string }>
-                toast.error(error.response?.data?.message || error.message)
-            }
+    const getTasks=async()=>{
+        try{
+            const {data}=await api.get('/api/tasks/assigned')
+            setTasks(data)
+        }catch(err){
+            const error = err as AxiosError<{ message: string }>
+            toast.error(error.response?.data?.message || error.message)
         }
-        getTasks()
+    }
+    useEffect(()=>{
+        const handleRefresh = () => {
+            getTasks(); 
+        }
+        handleRefresh();// initial call
+
+        socket.on("task-assigned", handleRefresh);
+        socket.on("task-updated", handleRefresh);
+        socket.on("status-updated", handleRefresh);
+
+        return () => {
+            socket.off("task-assigned", handleRefresh);
+            socket.off("task-updated", handleRefresh);
+            socket.off("status-updated", handleRefresh);
+        };
     },[])
     const today = new Date()
     today.setHours(0, 0, 0, 0)

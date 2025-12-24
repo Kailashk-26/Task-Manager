@@ -1,36 +1,53 @@
-// src/socket.ts
 import { Server } from "socket.io";
 import http from "http";
+import jwt from "jsonwebtoken";
 
 let io: Server;
 
-/**
- * Initialize socket.io with http server
- */
 export const initSocket = (server: http.Server) => {
   io = new Server(server, {
     cors: {
-      origin: "*", // later restrict to frontend URL
+      origin: "*", 
+      methods: ["GET", "POST"],
     },
   });
 
-  io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
+  io.use((socket, next) => {
+    try {
+      const token = socket.handshake.auth?.token;
 
-    socket.on("join", (userId: string) => {
-      socket.join(userId); // room = userId
-      console.log(`User ${userId} joined room`);
-    });
+      if (!token) {
+        return next(new Error("Authentication token missing"));
+      }
+
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET!
+      ) as { userId: string };
+
+      socket.data.userId = decoded.userId;
+
+      socket.join(decoded.userId);
+
+      console.log("Socket authenticated:", decoded.userId);
+      next();
+    } catch (err) {
+      console.error("Socket auth failed");
+      next(new Error("Unauthorized"));
+    }
+  });
+
+  io.on("connection", (socket) => {
+    console.log("Socket connected:", socket.data.userId);
 
     socket.on("disconnect", () => {
-      console.log("Socket disconnected:", socket.id);
+      console.log("Socket disconnected:", socket.data.userId);
     });
   });
 };
 
-/**
- * Get socket instance anywhere (controllers)
- */
+
+
 export const getIO = () => {
   if (!io) {
     throw new Error("Socket.io not initialized");

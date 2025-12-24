@@ -4,6 +4,7 @@ import api from "../configs/api";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import socket from "../configs/socket";
 
 
 const Login = () => {
@@ -45,6 +46,11 @@ const Login = () => {
 
                 toast.success(resData.message);
                 localStorage.setItem("token", resData.token);
+                socket.auth = {
+                    token: resData.token,
+                };
+
+                socket.connect();
                 navigate('/')
             } else {
             const { data:resData } = await api.post<AuthResponse>("/api/users/reg",
