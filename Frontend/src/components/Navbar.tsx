@@ -36,7 +36,6 @@ const Navbar = () => {
                 <button onClick={()=>goToTasks()} className="btn btn-ghost btn-circle">
                 <div className="indicator">
                     <ClipboardList/>
-                    <span className="badge badge-xs badge-primary indicator-item"></span>
                 </div>
                 </button>
                 <button onClick={()=>goProfile()} className="btn btn-ghost btn-circle">
