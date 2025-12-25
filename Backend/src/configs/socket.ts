@@ -3,12 +3,17 @@ import http from "http";
 import jwt from "jsonwebtoken";
 
 let io: Server;
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+].filter(Boolean) as string[];
 
 export const initSocket = (server: http.Server) => {
   io = new Server(server, {
     cors: {
-      origin: "*", 
+      origin: allowedOrigins, 
       methods: ["GET", "POST"],
+      credentials:true,
     },
   });
 

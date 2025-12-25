@@ -10,12 +10,19 @@ import { initSocket } from "./configs/socket.ts";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+].filter(Boolean) as string[];
 
 // DB
 await connectDB();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }));
 
 // routes
 app.get("/", (req, res) => {
